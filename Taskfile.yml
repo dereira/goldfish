@@ -1,0 +1,52 @@
+version: "3"
+
+vars:
+  VERSION:
+    sh: git describe --tags --always --dirty 2>/dev/null || echo dev
+
+    # NOTE: this project uses CGO (tree-sitter). Cross-GOOS builds will fail
+  GOOS:
+    sh: go env GOOS
+  GOARCH:
+    sh: go env GOARCH
+  CGO_ENABLED: "1"
+
+tasks:
+  build:
+    desc: >
+      Build a release binary
+    vars:
+      EXE_EXT: '{{if eq .GOOS "windows"}}.exe{{end}}'
+    env:
+      GOOS: "{{.GOOS}}"
+      GOARCH: "{{.GOARCH}}"
+      CGO_ENABLED: "{{.CGO_ENABLED}}"
+    cmd: go build -trimpath -ldflags "-s -w -X main.version={{.VERSION}}" -o "dist/goldfish_{{.GOOS}}_{{.GOARCH}}{{.EXE_EXT}}" \ .
+
+  lint:
+    desc: Run golangci-lint
+    cmd: golangci-lint run
+
+  lint:fix:
+    desc: Run golangci-lint with auto-fix
+    cmd: golangci-lint run --fix
+
+  tidy:
+    desc: Tidy go.mod and go.sum
+    cmd: go mod tidy
+
+  install:
+    desc: Install goldfish to GOPATH/bin
+    cmd: go install .
+
+  test:
+    desc: Run all tests with race detection
+    cmd: go test -race ./...
+
+  test:cover:
+    desc: Run tests with coverage and open HTML report
+    cmd: go test -race -coverprofile=coverage.out ./... && go tool cover -html=coverage.out
+
+  clean:
+    desc: Remove built binary
+    cmd: rm -f dist/goldfish
