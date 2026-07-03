@@ -1,0 +1,41 @@
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Go
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# tests
+coverage.out
+
+# Test binary, built with `go test -c`
+*.test
+
+# env file
+.env
+
+# Project, tag cache and sample output
+.goldfish.tags.cache/
+*.map
+map.txt
+
+# Go workspace file
+go.work
+go.work.sum
+
+# OS
+.DS_Store
+Thumbs.db
